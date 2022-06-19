@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'ol/ol.css';  //* 스타일
-import { Map as OlMap, View } from 'ol';  //* 뷰 관리
+import { Map as OlMap, View, Control } from 'ol';  //* 뷰 관리
 import { fromLonLat, get as getProjection } from 'ol/proj'; //* 위경도
 import TileLayer from 'ol/layer/Tile'; //* 지도타일
 import { Vector as VectorLayer } from 'ol/layer';
@@ -14,7 +14,7 @@ import Polyline from 'ol/format/Polyline'
 
 import markPoint from './arrow.svg'
 function GPSMap() {
-    const [mapObject, setMapObject] = useState({});
+    const [mapObject, setMapObject] = useState(null);
     const [vectorLayer, setVectorLayer] = useState(null);
 
     const polyline = [
@@ -274,6 +274,7 @@ function GPSMap() {
 
 
     let moveFeature = function (event) {
+        // console.log(event)
         let vectorContext = event.vectorContext;
         let frameState = event.frameState;
 
@@ -290,24 +291,29 @@ function GPSMap() {
 
             let currentPoint = new Point(polyline[index]).transform('EPSG:4326', 'EPSG:3857');
             let feature = new Feature(currentPoint);
-            vectorContext.drawFeature(feature, styles.geoMarker);
+            // vectorContext.drawFeature(feature, styles.geoMarker);
         }
         // tell OpenLayers to continue the postcompose animation
         mapObject.render();
     };
 
     function startAnimation() {
-        if (Object.values(mapObject).length) {
-            animating = true;
-            now = new Date().getTime();
-            speed = 2;
-            // startButton.textContent = 'Cancel Animation';
-            // hide geoMarker
-            geoMarker.setStyle(null);
-            // just in case you pan somewhere else
-            mapObject.getView().setCenter(center);
-            mapObject.on('postcompose', moveFeature);
-            mapObject.render();
+        if (animating) {
+            stopAnimation(false);
+        } else {
+            // console.log(mapObject)
+            if (Object.values(mapObject).length) {
+                animating = true;
+                now = new Date().getTime();
+                speed = 2;
+                // startButton.textContent = 'Cancel Animation';
+                // hide geoMarker
+                geoMarker.setStyle(null);
+                // just in case you pan somewhere else
+                mapObject.getView().setCenter(center);
+                mapObject.on('postcompose', moveFeature);
+                mapObject.render();
+            }
         }
     }
 
@@ -349,7 +355,7 @@ function GPSMap() {
                     vectorLayer
                 ],
             })
-            setMapObject({ map })
+            setMapObject(map)
         }
     }, [vectorLayer])
 
@@ -363,6 +369,7 @@ function GPSMap() {
                 {/* <div id='marker' style={{ backgroundColor: 'black', zIndex: 2000 }}></div> */}
             </div>
             <button id="start-animation" onClick={startAnimation}>Start Animation</button>
+            <button id="stop-animation" onClick={stopAnimation}>stop Animation</button>
         </>
     )
 }
