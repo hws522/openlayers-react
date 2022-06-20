@@ -6,7 +6,7 @@ import PointAnimation from './gps/PointAnimation'
 function CardComponent() {
     return (
         <>
-            <Card style={{}}>
+            <Card>
                 {/* <GPSMap /> */}
                 <PointAnimation />
             </Card>
