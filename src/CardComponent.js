@@ -1,12 +1,14 @@
-import Card from 'antd/lib/card/Card'
+import { Card } from 'antd'
 import React from 'react'
 import GPSMap from './gps/GPSMap'
+import PointAnimation from './gps/PointAnimation'
 
 function CardComponent() {
     return (
         <>
             <Card style={{}}>
-                <GPSMap />
+                {/* <GPSMap /> */}
+                <PointAnimation />
             </Card>
         </>
     )
